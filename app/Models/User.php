@@ -2,22 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laratrust\Traits\HasRolesAndPermissions;
 use Laravel\Sanctum\HasApiTokens;
-use Laratrust\Traits\LaratrustUserTrait;
-use App\Models\comment;
-use App\Models\update;
-use App\Models\team;
-use App\Models\testimonials;
-use App\Models\project;
 
 class User extends Authenticatable
 {
-    use LaratrustUserTrait;
     use HasApiTokens, HasFactory, Notifiable;
+    use HasRolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'bio',
+        'location',
+        'website',
+        'phone',
+        'avatar',
     ];
 
     /**
@@ -48,21 +47,63 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function team() {
-        return $this->hasMany(team::class,'user_id', 'id');
+
+    public function team()
+    {
+        return $this->hasMany(Team::class, 'user_id', 'id');
     }
-    public function testimonials() {
-        return $this->hasMany(testimonials::class, 'user_id', 'id');
+
+    public function testimonials()
+    {
+        return $this->hasMany(Testimonials::class, 'user_id', 'id');
     }
-    public function project() {
-        return $this->hasMany(project::class,'user_id', 'id');
+
+    public function project()
+    {
+        return $this->hasMany(Project::class, 'user_id', 'id');
     }
-    public function comment() {
-        return $this->hasMany(comment::class, 'user_id', 'id');
+
+    public function comment()
+    {
+        return $this->hasMany(Comment::class, 'user_id', 'id');
     }
-    public function updates() {
-        return $this->hasMany(update::class, 'user_id', 'id');
+
+    public function updates()
+    {
+        return $this->hasMany(Update::class, 'user_id', 'id');
     }
-   
- 
+
+    /**
+     * Get the user's investments
+     */
+    public function investments()
+    {
+        return $this->hasMany(Investment::class);
+    }
+
+    /**
+     * Get the user's payment methods
+     */
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    /**
+     * Get the user's default payment method
+     */
+    public function defaultPaymentMethod()
+    {
+        return $this->hasOne(PaymentMethod::class)->where('is_default', true);
+    }
+
+    /**
+     * Get projects backed by this user
+     */
+    public function backedProjects()
+    {
+        return $this->belongsToMany(Project::class, 'investments')
+            ->withPivot(['amount', 'reward_id', 'message', 'status', 'backed_at'])
+            ->withTimestamps();
+    }
 }

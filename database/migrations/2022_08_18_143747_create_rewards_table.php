@@ -17,8 +17,8 @@ class CreateRewardsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('description')->nullable();
-            $table->decimal('discount',12,2);
-            $table->unsignedBigInteger('project_id');            
+            $table->decimal('discount', 12, 2);
+            $table->unsignedBigInteger('project_id');
             $table->foreign('project_id')->references('id')->on('projects');
             $table->timestamps();
         });

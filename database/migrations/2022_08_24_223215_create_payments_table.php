@@ -14,14 +14,14 @@ class CreatePaymentsTable extends Migration
     public function up()
     {
         Schema::create('payments', function (Blueprint $table) {
-                $table->id();
-                $table->string('s_payment_id'); // stripe payment id
-                $table->unsignedBigInteger('user_id');            
-                $table->foreign('user_id')->references('id')->on('users');
-                $table->unsignedBigInteger('project_id');            
-                $table->foreign('project_id')->references('id')->on('projects');
-                $table->string('amount');
-                $table->timestamps();
+            $table->id();
+            $table->string('s_payment_id'); // stripe payment id
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('project_id');
+            $table->foreign('project_id')->references('id')->on('projects');
+            $table->string('amount');
+            $table->timestamps();
         });
     }
 

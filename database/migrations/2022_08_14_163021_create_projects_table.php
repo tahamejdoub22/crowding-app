@@ -20,13 +20,12 @@ class CreateProjectsTable extends Migration
             $table->text('project_description');
             $table->date('start_date');
             $table->date('end_date');
-            $table->decimal('goal',12,2);
-            $table->decimal('pledged',12,2);
+            $table->decimal('goal', 12, 2);
+            $table->decimal('pledged', 12, 2);
             $table->integer('investors')->nullable();
             $table->string('image');
-            $table->unsignedBigInteger('user_id');            
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-
 
             $table->timestamps();
         });

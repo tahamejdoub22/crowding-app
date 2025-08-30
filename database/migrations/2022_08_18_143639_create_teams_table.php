@@ -16,11 +16,11 @@ class CreateTeamsTable extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('displayname')->nullable(); 
+            $table->string('displayname')->nullable();
             $table->string('image');
-            $table->unsignedBigInteger('user_id');            
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-           	            
+
             $table->timestamps();
         });
     }

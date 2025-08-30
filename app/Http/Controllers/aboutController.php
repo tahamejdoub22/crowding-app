@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Testimonials;
 use App\Models\User;
 
-use App\Models\testimonials;
-class aboutController extends Controller
+class AboutController extends Controller
 {
     public function index()
     {
-        $testimonials = testimonials::with('user')->get();
+        $testimonials = Testimonials::with('user')->get();
         $user = User::with('testimonials')->get();
-        return view('project.about', compact('testimonials', 'user'));
 
+        return view('project.about', compact('testimonials', 'user'));
     }
 }

@@ -15,32 +15,30 @@ return [
         'admin' => [
             'users' => 'c,r,u,d',
             'payments' => 'c,r,u,d',
-            'reward' =>'c,r,u,d',
+            'reward' => 'c,r,u,d',
             'comment' => 'c,r,u,d',
             'updates' => 'c,r,u,d',
 
-'team'=>'c,r,u,d',
-'testimonials'=>'c,r,u,d',
-            'profile' => 'r,u'
+            'team' => 'c,r,u,d',
+            'testimonials' => 'c,r,u,d',
+            'profile' => 'r,u',
         ],
         'projectresponsable' => [
             'project' => 'c',
             'comment' => 'r',
-            'reward' =>'c,r,u',
-            'team'=>'r',
-'testimonials'=>'r',
-'updates' =>'c,r,u'
-
+            'reward' => 'c,r,u',
+            'team' => 'r',
+            'testimonials' => 'r',
+            'updates' => 'c,r,u',
 
         ],
         'projectinvestor' => [
             'payments' => 'c',
             'project' => 'r',
             'comment' => 'c,r,u',
-            'team'=>'r',
-            'testimonials'=>'r',
-            'updates' =>'r'
-
+            'team' => 'r',
+            'testimonials' => 'r',
+            'updates' => 'r',
 
         ],
 
@@ -50,6 +48,6 @@ return [
         'c' => 'create',
         'r' => 'read',
         'u' => 'update',
-        'd' => 'delete'
-    ]
+        'd' => 'delete',
+    ],
 ];

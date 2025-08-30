@@ -2,30 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Comment;
+use App\Models\Project;
 use App\Models\User;
-use App\Models\project;
+use Illuminate\Http\Request;
 
-use App\Models\comment;
-class commentController extends Controller
+class CommentController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-
-        $comment = comment::with('user')->get();
-        $comment = comment::with('project')->get();
-        $project = project::with('comment')->get();
+        $comment = Comment::with('user')->get();
+        $comment = Comment::with('project')->get();
+        $project = Project::with('comment')->get();
 
         $user = User::with('comment')->get();
-        return view ('comment.index', compact('comment','project', 'user'))
-        ;
+
+        return view('comment.index', compact('comment', 'project', 'user'));
     }
-     
 
     /**
      * Show the form for creating a new resource.
@@ -35,24 +33,20 @@ class commentController extends Controller
     public function create()
     {
         $users = User::all();
-        $projects = project::all();
+        $projects = Project::all();
 
-        return view('comment.create')->with('user',$users)->with('project',$projects) ;
-
+        return view('comment.create')->with('user', $users)->with('project', $projects);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-       
-
-       // $input = $request->all();
-        $comment = new comment;
+        // $input = $request->all();
+        $comment = new Comment;
         $comment->name = $request->name;
         $comment->user_id = $request->user_id;
         $comment->text = $request->text;
@@ -60,15 +54,15 @@ class commentController extends Controller
         $comment->image = $request->image;
 
         $comment->save();
-        
+
         if ($image = $request->file('image')) {
             $destinationPath = 'image/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
         }
-    
-       //project::create($input);
+
+        // Project::create($input);
         return redirect('comment')->with('flash_message', 'Contact Addedd!');
     }
 
@@ -80,7 +74,7 @@ class commentController extends Controller
      */
     public function show($id)
     {
-        $contact = comment::find($id);
+        $contact = Comment::find($id);
 
         return view('comment.show')->with('comment', $contact);
     }
@@ -93,41 +87,41 @@ class commentController extends Controller
      */
     public function edit($id)
     {
-        $contact = comment::find($id);
+        $contact = Comment::find($id);
         $users = User::all();
-        $projects = project::all();
+        $projects = Project::all();
 
-        return view('comment.edit')->with('comment', $contact)->with('user',$users)->with('project',$projects);
+        return view('comment.edit')->with('comment', $contact)->with('user', $users)->with('project', $projects);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $comment = new comment;
-        $comment = comment::find($id);
+        $comment = new Comment;
+        $comment = Comment::find($id);
         $comment->name = $request->name;
         $comment->user_id = $request->user_id;
         $comment->text = $request->text;
         $comment->project_id = $request->project_id;
         $comment->image = $request->image;
 
-        $comment->save();     
-        //$input = $request->all();
+        $comment->save();
+        // $input = $request->all();
         if ($image = $request->file('image')) {
             $destinationPath = 'image/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
-        }else{
-           // unset($input['image']);
+        } else {
+            // unset($input['image']);
         }
-       // $contact->update($project);
+
+        // $contact->update($project);
         return redirect('comment')->with('flash_message', 'comment Updated!');
     }
 
@@ -139,7 +133,8 @@ class commentController extends Controller
      */
     public function destroy($id)
     {
-        comment::destroy($id);
+        Comment::destroy($id);
+
         return redirect('comment')->with('flash_message', 'comment deleted!');
     }
 }

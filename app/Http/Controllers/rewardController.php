@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
+use App\Models\Reward;
 use Illuminate\Http\Request;
-use App\Models\reward;
 
-use App\Models\project;
-class rewardController extends Controller
+class RewardController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        $reward = Reward::with('project')->get();
+        $project = Project::with('reward')->get();
 
-        $reward = reward::with('project')->get();
-        $project = project::with('reward')->get();
-        return view ('reward.index', compact('reward', 'project'))
-        ;
+        return view('reward.index', compact('reward', 'project'));
     }
-     
 
     /**
      * Show the form for creating a new resource.
@@ -30,34 +28,28 @@ class rewardController extends Controller
      */
     public function create()
     {
-        $projects = project::all();
+        $projects = Project::all();
 
-        return view('reward.create')->with('project',$projects) ;
-
+        return view('reward.create')->with('project', $projects);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-       
-
-       // $input = $request->all();
-        $reward = new reward;
+        // $input = $request->all();
+        $reward = new Reward;
         $reward->name = $request->name;
         $reward->project_id = $request->project_id;
         $reward->description = $request->description;
         $reward->discount = $request->discount;
-        
 
         $reward->save();
-        
-    
-       //project::create($input);
+
+        // Project::create($input);
         return redirect('reward')->with('flash_message', 'Contact Addedd!');
     }
 
@@ -69,7 +61,7 @@ class rewardController extends Controller
      */
     public function show($id)
     {
-        $contact = reward::find($id);
+        $contact = Reward::find($id);
 
         return view('reward.show')->with('reward', $contact);
     }
@@ -82,33 +74,31 @@ class rewardController extends Controller
      */
     public function edit($id)
     {
-        $contact = reward::find($id);
-        $projects = project::all();
+        $contact = Reward::find($id);
+        $projects = Project::all();
 
-        return view('reward.edit')->with('reward', $contact)->with('project',$projects);
+        return view('reward.edit')->with('reward', $contact)->with('project', $projects);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $reward = new reward;
-        $reward = reward::find($id);
+        $reward = new Reward;
+        $reward = Reward::find($id);
         $reward->name = $request->name;
         $reward->project_id = $request->project_id;
         $reward->description = $request->description;
         $reward->discount = $request->discount;
-        
 
-        $reward->save();    
-        //$input = $request->all();
-       
-       // $contact->update($project);
+        $reward->save();
+        // $input = $request->all();
+
+        // $contact->update($project);
         return redirect('reward')->with('flash_message', 'project Updated!');
     }
 
@@ -120,7 +110,8 @@ class rewardController extends Controller
      */
     public function destroy($id)
     {
-        reward::destroy($id);
+        Reward::destroy($id);
+
         return redirect('reward')->with('flash_message', 'project deleted!');
     }
 }

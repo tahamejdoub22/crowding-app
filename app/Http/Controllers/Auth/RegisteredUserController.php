@@ -26,7 +26,6 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -37,6 +36,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:projectresponsable,projectinvestor'],
         ]);
 
         $user = User::create([
@@ -44,10 +44,22 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $user->attachRole($request->role_id);
+
+        // Add role to user
+        if ($request->role) {
+            $user->addRole($request->role);
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
+
+        // Redirect based on user role
+        if ($user->hasRole('projectinvestor')) {
+            return redirect()->route('investor.dashboard');
+        } elseif ($user->hasRole('projectresponsable')) {
+            return redirect()->route('project.index');
+        }
 
         return redirect(RouteServiceProvider::HOME);
     }

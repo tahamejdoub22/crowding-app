@@ -2,32 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Testimonials;
 use App\Models\User;
+use Illuminate\Http\Request;
 
-use App\Models\testimonials;
-class testimonialsController extends Controller
+class TestimonialsController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-
-        $testimonials = testimonials::with('user')->get();
+        $testimonials = Testimonials::with('user')->get();
         $user = User::with('testimonials')->get();
-        return view ('testimonials.index', compact('testimonials', 'user'))
-        ;
+
+        return view('testimonials.index', compact('testimonials', 'user'));
     }
+
     public function test()
     {
-
-        $testimonials = testimonials::with('user')->get();
+        $testimonials = Testimonials::with('user')->get();
         $user = User::with('testimonials')->get();
-        return view ('project.testimonials', compact('testimonials', 'user'))
-        ;
+
+        return view('project.testimonials', compact('testimonials', 'user'));
     }
 
     /**
@@ -39,22 +38,18 @@ class testimonialsController extends Controller
     {
         $users = User::all();
 
-        return view('testimonials.create')->with('user',$users) ;
-
+        return view('testimonials.create')->with('user', $users);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-       
-
-       // $input = $request->all();
-        $testimonials = new testimonials;
+        // $input = $request->all();
+        $testimonials = new Testimonials;
         $testimonials->name = $request->name;
         $testimonials->user_id = $request->user_id;
         $testimonials->text = $request->text;
@@ -65,12 +60,12 @@ class testimonialsController extends Controller
 
         if ($image = $request->file('image')) {
             $destinationPath = 'image/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
         }
-    
-       //project::create($input);
+
+        // project::create($input);
         return redirect('testimonials')->with('flash_message', 'Contact Addedd!');
     }
 
@@ -82,7 +77,7 @@ class testimonialsController extends Controller
      */
     public function show($id)
     {
-        $contact = testimonials::find($id);
+        $contact = Testimonials::find($id);
 
         return view('testimonials.show')->with('testimonials', $contact);
     }
@@ -95,40 +90,40 @@ class testimonialsController extends Controller
      */
     public function edit($id)
     {
-        $contact = testimonials::find($id);
+        $contact = Testimonials::find($id);
         $users = User::all();
 
-        return view('testimonials.edit')->with('testimonials', $contact)->with('user',$users);
+        return view('testimonials.edit')->with('testimonials', $contact)->with('user', $users);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $testimonials = new testimonials;
-        $testimonials = testimonials::find($id);
+        $testimonials = new Testimonials;
+        $testimonials = Testimonials::find($id);
         $testimonials->name = $request->name;
         $testimonials->user_id = $request->user_id;
         $testimonials->text = $request->text;
         $testimonials->displayname = $request->displayname;
 
         $testimonials->image = $request->image;
-        $testimonials->save();     
-        //$input = $request->all();
+        $testimonials->save();
+        // $input = $request->all();
         if ($image = $request->file('image')) {
             $destinationPath = 'image/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $profileImage = date('YmdHis') . '.' . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
-        }else{
-           // unset($input['image']);
+        } else {
+            // unset($input['image']);
         }
-       // $contact->update($project);
+
+        // $contact->update($project);
         return redirect('testimonials')->with('flash_message', 'testimonials Updated!');
     }
 
@@ -140,7 +135,8 @@ class testimonialsController extends Controller
      */
     public function destroy($id)
     {
-        testimonials::destroy($id);
+        Testimonials::destroy($id);
+
         return redirect('testimonials')->with('flash_message', 'project deleted!');
     }
 }

@@ -20,11 +20,11 @@
                 <nav class="mb-6" aria-label="Breadcrumb">
                     <ol class="flex items-center space-x-3 text-sm">
                         <li>
-                            <a href="{{ route('project.index') }}" class="flex items-center text-gray-500 hover:text-primary-600 transition-colors">
+                            <a href="{{ route('project.explore') }}" class="flex items-center text-gray-500 hover:text-primary-600 transition-colors">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                                 </svg>
-                                Projects
+                                Explore Projects
                             </a>
                         </li>
                         <li class="flex items-center">
@@ -381,7 +381,7 @@
                         @endif
 
                         <!-- Funding Statistics Card -->
-                        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg sticky-funding-card">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-lg sticky-funding-card relative z-0">
                             <!-- Funding Progress -->
                             <div class="p-8 pb-6">
                                 <!-- Amount Raised -->
@@ -454,12 +454,48 @@
                                 @if($isActive)
                                     @auth
                                         @if(auth()->user()->hasRole('projectinvestor'))
-                                            <a href="{{ route('project.back', $project) }}" class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 mb-3 block text-center">
-                                                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
-                                                </svg>
-                                                Back This Project
-                                            </a>
+                                            @php
+                                                $userHasBacked = \App\Models\Investment::where('project_id', $project->id)
+                                                    ->where('user_id', auth()->id())
+                                                    ->where('status', 'completed')
+                                                    ->exists();
+                                                
+                                                $userInvestment = \App\Models\Investment::where('project_id', $project->id)
+                                                    ->where('user_id', auth()->id())
+                                                    ->where('status', 'completed')
+                                                    ->first();
+                                            @endphp
+                                            
+                                            @if($userHasBacked)
+                                                <div class="w-full bg-green-100 border-2 border-green-300 text-green-800 font-bold py-4 px-6 rounded-xl mb-3 text-center">
+                                                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    ✓ You're Backing This Project
+                                                </div>
+                                                @if($userInvestment)
+                                                    <a href="{{ route('investor.backed-projects.show', $userInvestment) }}" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 mb-3 block text-center">
+                                                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                        </svg>
+                                                        View My Backing Details
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('investor.backed-projects') }}" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-6 rounded-xl transition-all duration-200 mb-3 block text-center text-sm">
+                                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                    </svg>
+                                                    All My Investments
+                                                </a>
+                                            @else
+                                                <a href="{{ route('project.back', $project) }}" class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 mb-3 block text-center">
+                                                    <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                                    </svg>
+                                                    Back This Project
+                                                </a>
+                                            @endif
                                         @elseif(auth()->user()->hasRole('projectresponsable') && auth()->user()->id == $project->user_id)
                                             <a href="{{ route('project.edit', $project->id) }}" class="w-full btn btn-outline btn-large">
                                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -528,7 +564,7 @@
 
                         <!-- Desktop Support Tiers -->
                         @if($project->reward && $project->reward->count() > 0)
-                            <div class="hidden xl:block bg-white rounded-2xl border border-gray-100 shadow-md">
+                            <div class="hidden xl:block bg-white rounded-2xl border border-gray-100 shadow-md relative z-10">
                                 <div class="px-8 py-6 border-b border-gray-100">
                                     <h3 class="text-xl font-bold text-gray-900">Support Tiers</h3>
                                     <p class="text-gray-600 text-sm mt-1">Choose your level of support</p>
@@ -571,6 +607,7 @@
                 overflow-y: auto;
                 scrollbar-width: thin;
                 scrollbar-color: #e5e7eb transparent;
+                z-index: 1;
             }
         }
         

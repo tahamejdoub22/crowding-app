@@ -14,7 +14,7 @@
 
                 <!-- Search & Filters -->
                 <div class="max-w-4xl mx-auto">
-                    <form method="GET" action="{{ route('project.index') }}" class="space-y-6">
+                    <form method="GET" action="{{ route('project.explore') }}" class="space-y-6">
                         <!-- Search Bar -->
                         <div class="relative">
                             <input 
@@ -134,7 +134,7 @@
                                 <div class="text-sm text-gray-600">
                                     Showing {{ $projects->count() }} of {{ $projects->total() }} projects
                                 </div>
-                                <a href="{{ route('project.index') }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                                <a href="{{ route('project.explore') }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
                                     Clear all filters
                                 </a>
                             </div>
@@ -150,7 +150,7 @@
                 @if($projects->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         @foreach($projects as $project)
-                            <x-project-card :project="$project" />
+                            <x-project-card :project="$project" :publicView="true" />
                         @endforeach
                     </div>
 
@@ -171,7 +171,7 @@
                             <p class="text-gray-600 mb-6">
                                 Try adjusting your search criteria or browse all projects.
                             </p>
-                            <a href="{{ route('project.index') }}" class="btn btn-primary">
+                            <a href="{{ route('project.explore') }}" class="btn btn-primary">
                                 View All Projects
                             </a>
                         </div>
@@ -181,26 +181,42 @@
         </section>
 
         <!-- Call to Action -->
-        @auth
-            @if(auth()->user()->hasRole('projectresponsable'))
-                <section class="bg-gradient-primary py-16">
-                    <div class="container-custom text-center">
-                        <h2 class="text-3xl font-display font-bold text-white mb-4">
-                            Ready to Launch Your Project?
-                        </h2>
-                        <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                            Join thousands of creators who have successfully funded their dreams on our platform.
-                        </p>
-                        <a href="{{ route('project.create') }}" class="btn btn-white btn-large">
+        <section class="bg-gradient-primary py-16">
+            <div class="container-custom text-center">
+                <h2 class="text-3xl font-display font-bold text-white mb-4">
+                    Ready to Launch Your Project?
+                </h2>
+                <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                    Join thousands of creators who have successfully funded their dreams on our platform.
+                </p>
+                <div class="space-x-4">
+                    @guest
+                        <a href="{{ route('register') }}" class="btn btn-white btn-large">
                             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Start Your Project
+                            Get Started
                         </a>
-                    </div>
-                </section>
-            @endif
-        @endauth
+                        <a href="{{ route('login') }}" class="btn btn-outline-white btn-large">
+                            Sign In
+                        </a>
+                    @else
+                        @if(auth()->user()->hasRole('projectresponsable'))
+                            <a href="{{ route('project.create') }}" class="btn btn-white btn-large">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Start Your Project
+                            </a>
+                        @else
+                            <a href="{{ route('dashboard') }}" class="btn btn-white btn-large">
+                                Go to Dashboard
+                            </a>
+                        @endif
+                    @endguest
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- JavaScript for Advanced Filters Toggle -->
